@@ -3,8 +3,7 @@
 Every browser ever built assumes the query is finished before the search
 begins. This one doesn't.
 
-<!-- GIF of the decay spike goes here once M1 (hosted spike) lands:
-     docs/assets/decay.gif — recorded from the live page. -->
+![A phrase typed calmly barely dims before the query leaps between unrelated words, decaying and drift-triggering as it goes](docs/assets/decay.gif)
 
 There is no Enter key. As you type, each token joins a live query with a
 weight that decays exponentially:
@@ -27,17 +26,20 @@ The chaos is proportional to your own incoherence. λ is the one dial:
 
 ## Try it
 
-A hosted page is milestone M1 ([roadmap](docs/roadmap.md)). Until it lands:
+**[generaljudas.github.io/lucidBrowser](https://generaljudas.github.io/lucidBrowser/)**
+— no install, just type.
+
+The current spike shows the decaying query itself — every token at the
+opacity of its own weight, dimming in real time, with the drift trigger
+pinging when it fires. Retrieval is not wired in yet, and the spike's
+embeddings are deterministic fakes: real static vectors arrive with M2.
+
+To run it locally instead:
 
 ```
 npm install
 npm run dev
 ```
-
-Then type. The current spike shows the decaying query itself — every token
-at the opacity of its own weight, dimming in real time, with the drift
-trigger pinging when it fires. Retrieval is not wired in yet, and the spike's
-embeddings are deterministic fakes: real static vectors arrive with M2.
 
 ## How it holds together
 

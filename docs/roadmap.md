@@ -18,11 +18,14 @@ A milestone that serves no goal does not ship.
   zero-dependency invariants; the decay-readout spike; CI across all three
   toolchains; ADRs 0001–0004. *(G2, G3)*
 
+## Done (session 02)
+
+- **M1 — Hosted spike.** Deployed via GitHub Actions to GitHub Pages
+  (generaljudas.github.io/lucidBrowser) on every push to `main`; README GIF
+  recorded from the live page. *(G1)*
+
 ## Next
 
-- **M1 — Hosted spike.** The spike deployed as a static page (GitHub Pages or
-  equivalent) so "URL, typing, chaos" is literally true, plus the README GIF
-  recorded from it. *(G1)*
 - **M2 — Real static embeddings + bundled corpus.** `pipeline/` becomes real:
   corpus acquisition, chunking, static-space document embedding with SIF
   weighting (ADR-0002 v1), int8 quantisation with **measured recall loss**,
