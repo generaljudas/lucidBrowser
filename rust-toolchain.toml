@@ -1,0 +1,6 @@
+# Pinned so CI and contributors build the index crate with one known toolchain.
+# rustup reads this file; a system cargo of the same version (e.g. Homebrew) also works.
+[toolchain]
+channel = "1.98.0"
+components = ["rustfmt", "clippy"]
+targets = ["wasm32-unknown-unknown"]

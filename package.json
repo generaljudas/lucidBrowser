@@ -1,0 +1,30 @@
+{
+  "name": "riptide",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "core",
+    "app"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p core && tsc -p core/test && tsc -p app",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "golden:update": "UPDATE_GOLDEN=1 vitest run core/test/golden.test.ts",
+    "dev": "npm --workspace app run dev",
+    "build": "npm --workspace app run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.2.0",
+    "eslint": "^10.9.0",
+    "fast-check": "^4.9.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0",
+    "vitest": "^4.1.11"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "@riptide/core",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "The Riptide engine: decay reducer, trigger state machine, event log. Pure, synchronous, zero runtime dependencies.",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  }
+}

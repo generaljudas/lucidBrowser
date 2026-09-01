@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  node:
+    name: core + app (lint, typecheck, test, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  rust:
+    name: index (fmt, clippy, test, wasm build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: index
+    steps:
+      - uses: actions/checkout@v4
+      # Installs the exact toolchain, components and wasm target pinned in
+      # rust-toolchain.toml at the repository root.
+      - run: rustup toolchain install
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
+      - run: cargo build --release --target wasm32-unknown-unknown
+
+  python:
+    name: pipeline (ruff, pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - run: pip install -e './pipeline[dev]'
+      - run: ruff check pipeline
+      - run: ruff format --check pipeline
+      - run: pytest pipeline

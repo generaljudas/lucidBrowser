@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    // No "DOM" lib and no ambient types: the compiler itself rejects platform
+    // APIs in the core, alongside the ESLint bans (invariant 2).
+    "lib": ["ES2022"],
+    "types": []
+  },
+  "include": ["src"]
+}

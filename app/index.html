@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Riptide — the query is never finished</title>
+    <style>
+      :root {
+        --bg: #04080d;
+        --chrome: #9fb3ad;
+        --chrome-dim: #52645f;
+        --ink: #e8f1ee;
+        --accent: #62e6c8;
+        --line: rgba(159, 179, 173, 0.16);
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: system-ui, sans-serif;
+        overflow: hidden;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.8em;
+        padding: 14px 24px;
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--chrome);
+        border-bottom: 1px solid var(--line);
+      }
+      header .name {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      header .tag {
+        color: var(--chrome-dim);
+      }
+      header .count {
+        margin-left: auto;
+        font-variant-numeric: tabular-nums;
+        transition: color 300ms;
+      }
+      header .count.lit {
+        color: var(--accent);
+        transition: none;
+      }
+      #field {
+        flex: 1;
+        display: block;
+        width: 100%;
+        min-height: 0;
+      }
+      footer {
+        padding: 18px 24px 20px;
+        border-top: 1px solid var(--line);
+        display: grid;
+        gap: 14px;
+      }
+      #prompt {
+        width: 100%;
+        padding: 12px 14px;
+        font: 16px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        color: var(--ink);
+        caret-color: var(--accent);
+        background: rgba(232, 241, 238, 0.03);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        outline: none;
+      }
+      #prompt::placeholder {
+        color: var(--chrome-dim);
+      }
+      #prompt:focus-visible {
+        border-color: var(--accent);
+      }
+      .meters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 48px;
+        align-items: center;
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--chrome-dim);
+      }
+      .meter {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .drift .track {
+        position: relative;
+        width: 180px;
+        height: 1px;
+        background: var(--line);
+      }
+      .drift .notch {
+        position: absolute;
+        left: 18%;
+        top: -3px;
+        width: 1px;
+        height: 7px;
+        background: var(--chrome-dim);
+      }
+      .drift .dot {
+        position: absolute;
+        top: -2.5px;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        opacity: 0;
+      }
+      .attention input[type='range'] {
+        width: 180px;
+        accent-color: var(--accent);
+      }
+      .attention b {
+        color: var(--chrome);
+        font-weight: 500;
+      }
+      .ends {
+        display: flex;
+        justify-content: space-between;
+        width: 180px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span class="name">Riptide</span>
+      <span class="tag">decay spike — no retrieval, only the dying query</span>
+      <span class="count" id="fireCount">trigger ×0</span>
+    </header>
+    <canvas id="field"></canvas>
+    <footer>
+      <input
+        id="prompt"
+        placeholder="type — there is no enter key"
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        autofocus
+      />
+      <div class="meters">
+        <div class="meter drift">
+          <label for="prompt">drift</label>
+          <div class="track" aria-hidden="true">
+            <span class="notch" id="notch"></span>
+            <span class="dot" id="dot"></span>
+          </div>
+        </div>
+        <div class="meter attention">
+          <label for="span">attention span <b id="halfLifeLabel">10 s</b></label>
+          <div>
+            <input type="range" id="span" min="0" max="1000" step="1" />
+            <div class="ends"><span>goldfish · 4 s</span><span>monk · 10 min</span></div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

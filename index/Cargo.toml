@@ -1,0 +1,11 @@
+[package]
+name = "riptide-index"
+version = "0.0.1"
+edition = "2021"
+license = "MIT"
+description = "HNSW vector index for Riptide, compiled to WebAssembly (skeleton — roadmap M3)"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
