@@ -34,6 +34,34 @@ def dot(a: list[float], b: list[float]) -> float:
     return acc
 
 
+_U32 = 0xFFFFFFFF
+
+
+def fake_direction(text: str, dim: int) -> list[float]:
+    """core/src/fake.ts, operation for operation: FNV-1a over UTF-16 code units, then xorshift32.
+
+    This is the out-of-vocabulary fallback: an unknown word still becomes a
+    token with a deterministic direction, at the bundle's ``oovSalience``.
+    """
+    units = memoryview(text.encode("utf-16-le")).cast("H")
+    h = 0x811C9DC5
+    for unit in units:
+        h = ((h ^ unit) * 0x01000193) & _U32  # Math.imul(...) >>> 0
+    s = 0x9E3779B9 if h == 0 else h
+    out = [0.0] * dim
+    for i in range(dim):
+        s = (s ^ (s << 13)) & _U32
+        s = (s ^ (s >> 17)) & _U32
+        s = (s ^ (s << 5)) & _U32
+        out[i] = (s / 0x100000000) * 2 - 1
+    unit_vector = normalize(out)
+    if unit_vector is None:  # astronomically unlikely; the fake stays deterministic anyway
+        basis = [0.0] * dim
+        basis[0] = 1.0
+        return basis
+    return unit_vector
+
+
 class Tokens:
     def __init__(self, data: bytes) -> None:
         self.header, sections = bundle.unpack(data)
@@ -42,10 +70,11 @@ class Tokens:
         self._q = sections["vectors"]
         self._scales = sections["scales"]
 
-    def embed(self, word: str) -> list[float] | None:
+    def embed(self, word: str) -> list[float]:
         i = self.index.get(word)
         if i is None:
-            return None
+            oov = float(self.header["oovSalience"])
+            return [x * oov for x in fake_direction(word, int(self.header["dim"]))]
         return dequantize_row([int(x) for x in self._q[i]], float(self._scales[i]))
 
 
@@ -73,8 +102,6 @@ def blend(tokens: Tokens, weighted: list[tuple[str, float]]) -> list[float] | No
     acc = [0.0] * dim
     for word, weight in weighted:
         v = tokens.embed(word)
-        if v is None:
-            continue
         for i in range(dim):
             acc[i] += weight * v[i]
     return normalize(acc)

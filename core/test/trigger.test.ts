@@ -90,6 +90,20 @@ describe('trigger state machine', () => {
     expect(r.state.query).toBeNull();
   });
 
+  it('vector length is salience: a short vector barely moves the query, and is stored unscaled', () => {
+    // "glacier" at full length, then "the" at a hundredth of it (docs/adr/0005).
+    const short = basis(1).map((x) => 0.01 * x);
+    let r = step(init(config), { type: 'token', at: 0, text: 'glacier', vector: basis(0) });
+    r = step(r.state, { type: 'token', at: 0, text: 'the', vector: short });
+    expect(r.state.tokens[1].vector).toEqual(short);
+    // q ∝ e₀ + 0.01·e₁: the query is still almost entirely e₀.
+    const q = r.state.query!;
+    expect(q[0]).toBeCloseTo(1, 4);
+    expect(q[1]).toBeCloseTo(0.01, 4);
+    // Had the engine normalised on arrival, the blend would sit at 45°.
+    expect(q[1] / q[0]).toBeCloseTo(0.01, 10);
+  });
+
   it('an exactly cancelled blend has no direction: query is null and nothing fires', () => {
     const minus = basis(0).map((x) => -x);
     let r = step(init(config), { type: 'token', at: 0, text: 'a', vector: basis(0) });

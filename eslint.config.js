@@ -36,7 +36,7 @@ const bannedCoreGlobals = [
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/node_modules/**', 'index/target/**'],
+    ignores: ['**/dist/**', '**/node_modules/**', 'index/target/**', 'pipeline/.venv/**', 'pipeline/.cache/**'],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

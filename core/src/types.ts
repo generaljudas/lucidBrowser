@@ -28,7 +28,10 @@ export interface LiveToken {
   /** Monotonically increasing, never reused — which makes resurrection impossible by construction. */
   readonly id: number;
   readonly text: string;
-  /** Unit vector, fixed at birth. */
+  /**
+   * Fixed at birth and stored as the embedder supplied it: direction is
+   * meaning, length is salience (docs/adr/0005). Never re-normalised.
+   */
   readonly vector: Vec;
   /** Current weight, in (ε, 1]. Born at exactly 1. */
   readonly weight: number;

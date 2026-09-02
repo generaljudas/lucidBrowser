@@ -28,16 +28,22 @@ export function norm(v: Vec): number {
   return Math.sqrt(dot(v, v));
 }
 
+/** False when the vector has (near-)zero norm or any non-finite component. */
+export function hasDirection(v: Vec): boolean {
+  const n = norm(v);
+  return Number.isFinite(n) && n >= ZERO_NORM;
+}
+
 /**
  * Returns the unit vector, or null when the input has (near-)zero norm or any
  * non-finite component — a directionless vector has no meaningful normalised
  * form, and callers must decide what that means for them.
  */
 export function normalize(v: Vec): Vec | null {
-  const n = norm(v);
-  if (!Number.isFinite(n) || n < ZERO_NORM) {
+  if (!hasDirection(v)) {
     return null;
   }
+  const n = norm(v);
   const out: number[] = new Array(v.length);
   for (let i = 0; i < v.length; i++) {
     out[i] = v[i] / n;

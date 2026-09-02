@@ -7,7 +7,7 @@ import type {
   StepResult,
 } from './types';
 import type { Vec } from './vector';
-import { cosine, normalize } from './vector';
+import { cosine, hasDirection, normalize } from './vector';
 
 export function validateConfig(config: EngineConfig): void {
   const { lambda, epsilon, theta, refractory } = config;
@@ -103,11 +103,19 @@ export function step(state: EngineState, event: EngineEvent): StepResult {
   let nextTokenId = state.nextTokenId;
   switch (event.type) {
     case 'token': {
-      const unit = normalize(event.vector);
-      if (unit === null) {
+      // The vector is stored as it arrives: its length is the token's
+      // salience (docs/adr/0005), so re-normalising here would flatten
+      // "the" and "glacier" to the same pull on the query.
+      if (!hasDirection(event.vector)) {
         throw new Error(`token "${event.text}" arrived with a zero or non-finite vector`);
       }
-      tokens.push({ id: nextTokenId, text: event.text, vector: unit, weight: 1, bornAt: at });
+      tokens.push({
+        id: nextTokenId,
+        text: event.text,
+        vector: event.vector,
+        weight: 1,
+        bornAt: at,
+      });
       nextTokenId += 1;
       break;
     }

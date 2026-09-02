@@ -24,14 +24,32 @@ A milestone that serves no goal does not ship.
   (generaljudas.github.io/lucidBrowser) on every push to `main`; README GIF
   recorded from the live page. *(G1)*
 
+## Done (session 03)
+
+- **M2 — Real static embeddings + bundled corpus.** `pipeline/` is real:
+  the lead sections of Wikipedia's 998 level-3 vital articles, chunked;
+  GloVe 100-d with SIF folded into vector length (ADR-0005); int8
+  quantisation with recall@10 loss **measured at 0.6%**
+  ([report](reports/m2-bundle.md)); the packed `RIPT` format
+  ([spec](bundle-format.md), ADR-0006); `StaticTokenEmbedder` and
+  `BundledAdapter` behind the ports, pinned to a pure-Python reference by a
+  cross-language golden fixture. First real passages on screen; type size
+  is salience. *(G1, G2, G3)*
+
+## Follow-ups from M2
+
+- **G1 load time on real connections.** The bundles are 5.1 MB; the budget
+  wants ~8 Mb/s. Measure on throttled connections, then pull levers in
+  order: 50-d vectors (re-measure recall), smaller top-N, shorter snippets.
+  *(G1)*
+- **Snippet artefacts.** MediaWiki extracts leave empty parentheses where
+  pronunciation guides were; a cleanup pass in `chunk.py`. *(G1, cosmetic)*
+- **θ from people, not simulation.** 0.85 was set by replaying typed
+  sequences against the shipped bundle; watch real sessions before trusting
+  it. *(G2)*
+
 ## Next
 
-- **M2 — Real static embeddings + bundled corpus.** `pipeline/` becomes real:
-  corpus acquisition, chunking, static-space document embedding with SIF
-  weighting (ADR-0002 v1), int8 quantisation with **measured recall loss**,
-  packed binary format; query-side static token vectors shipped to the app;
-  `BundledAdapter` wired behind `RetrievalPort`. First results on screen.
-  *(G1, G2)*
 - **M3 — HNSW index in Rust/WASM.** Hand-implemented, with a
   **recall-versus-latency benchmark** against brute force, published as plots
   in-repo. *(G2, G3)*

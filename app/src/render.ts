@@ -1,3 +1,4 @@
+import { norm } from '@riptide/core';
 import type { EngineState, FireEvent } from '@riptide/core';
 
 /**
@@ -5,12 +6,16 @@ import type { EngineState, FireEvent } from '@riptide/core';
  * engine state is the single source of truth, and this file may read clocks
  * and interpolate all it likes — none of it feeds back into the model.
  *
- * The one contractual mapping: token opacity IS its weight. Colour
- * temperature (foam-white at birth, cold deep blue near death) and a slight
- * sink are extra channels layered on the same signal.
+ * Two contractual mappings: token opacity IS its weight, and type size IS
+ * its salience — the length of its vector (docs/adr/0005), so "the" is set
+ * small and "glacier" large, exactly in proportion to their pull on the
+ * query. Colour temperature (foam-white at birth, cold deep blue near death)
+ * and a slight sink are extra channels layered on the same signals.
  */
 
-const TOKEN_FONT = '28px Georgia, "Times New Roman", serif';
+const FONT_FAMILY = 'Georgia, "Times New Roman", serif';
+const FONT_MIN = 15;
+const FONT_MAX = 34;
 const PAD_X = 48;
 const PAD_Y = 40;
 const LINE_HEIGHT = 46;
@@ -40,6 +45,7 @@ export class Renderer {
   private readonly ctx: CanvasRenderingContext2D;
   private readonly positions = new Map<number, Position>();
   private pings: Ping[] = [];
+  private readonly fonts = new Map<number, string>();
   private readonly reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   constructor(canvas: HTMLCanvasElement) {
@@ -59,6 +65,17 @@ export class Renderer {
     this.canvas.width = Math.max(1, Math.round(clientWidth * dpr));
     this.canvas.height = Math.max(1, Math.round(clientHeight * dpr));
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  /** Type size from salience. Vectors are fixed at birth, so this is computed once per token. */
+  private fontFor(id: number, vector: readonly number[]): string {
+    let font = this.fonts.get(id);
+    if (font === undefined) {
+      const salience = Math.min(1, norm(vector));
+      font = `${(FONT_MIN + (FONT_MAX - FONT_MIN) * salience).toFixed(1)}px ${FONT_FAMILY}`;
+      this.fonts.set(id, font);
+    }
+    return font;
   }
 
   /** Called when the trigger fires: a sonar ping from the centre of the live text. */
@@ -84,7 +101,6 @@ export class Renderer {
     const height = this.canvas.clientHeight;
     ctx.clearRect(0, 0, width, height);
 
-    ctx.font = TOKEN_FONT;
     ctx.textBaseline = 'alphabetic';
 
     // Flow layout, recomputed every frame (the live set is tiny), then eased
@@ -92,14 +108,16 @@ export class Renderer {
     const maxX = Math.max(PAD_X + 40, width - PAD_X);
     let x = PAD_X;
     let line = 0;
-    const targets: Array<{ id: number; x: number; y: number }> = [];
+    const targets: Array<{ id: number; x: number; y: number; font: string }> = [];
     for (const token of state.tokens) {
+      const font = this.fontFor(token.id, token.vector);
+      ctx.font = font;
       const w = ctx.measureText(token.text).width;
       if (x + w > maxX && x > PAD_X) {
         x = PAD_X;
         line += 1;
       }
-      targets.push({ id: token.id, x, y: line * LINE_HEIGHT });
+      targets.push({ id: token.id, x, y: line * LINE_HEIGHT, font });
       x += w + WORD_GAP;
     }
     const blockHeight = (line + 1) * LINE_HEIGHT;
@@ -129,11 +147,13 @@ export class Renderer {
       const g = Math.round(DEATH.g + (BIRTH.g - DEATH.g) * w);
       const b = Math.round(DEATH.b + (BIRTH.b - DEATH.b) * w);
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${w})`;
+      ctx.font = target.font;
       ctx.fillText(token.text, pos.x, pos.y);
     }
     for (const id of this.positions.keys()) {
       if (!liveIds.has(id)) {
         this.positions.delete(id);
+        this.fonts.delete(id);
       }
     }
 

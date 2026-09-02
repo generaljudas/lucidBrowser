@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "typecheck": "tsc -p core && tsc -p core/test && tsc -p app",
+    "typecheck": "tsc -p core && tsc -p core/test && tsc -p app && tsc -p app/test",
     "test": "vitest run",
     "test:watch": "vitest",
     "golden:update": "UPDATE_GOLDEN=1 vitest run core/test/golden.test.ts",

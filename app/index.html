@@ -56,11 +56,97 @@
         color: var(--accent);
         transition: none;
       }
+      main {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+      }
       #field {
         flex: 1;
         display: block;
-        width: 100%;
+        min-width: 0;
         min-height: 0;
+      }
+      #results {
+        width: 340px;
+        flex: none;
+        overflow-y: auto;
+        padding: 22px 24px;
+        border-left: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      #results:empty {
+        display: none;
+      }
+      .hit {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+        animation: surface 480ms ease-out both;
+      }
+      .hit b {
+        display: block;
+        font: 500 13px/1.3 system-ui, sans-serif;
+        color: var(--ink);
+        margin-bottom: 4px;
+      }
+      .hit:hover b {
+        color: var(--accent);
+      }
+      .hit p {
+        font: 12px/1.45 Georgia, 'Times New Roman', serif;
+        color: var(--chrome);
+      }
+      .hit small {
+        float: right;
+        margin-left: 8px;
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        color: var(--chrome-dim);
+        font-variant-numeric: tabular-nums;
+      }
+      .credit {
+        margin-top: auto;
+        padding-top: 18px;
+        font-size: 10px;
+        line-height: 1.6;
+        letter-spacing: 0.08em;
+        color: var(--chrome-dim);
+      }
+      .credit a {
+        color: var(--chrome-dim);
+      }
+      @keyframes surface {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hit {
+          animation: none;
+        }
+      }
+      @media (max-width: 720px) {
+        main {
+          flex-direction: column;
+        }
+        #results {
+          width: auto;
+          max-height: 42%;
+          border-left: none;
+          border-top: 1px solid var(--line);
+        }
+      }
+      #prompt:disabled {
+        color: var(--chrome-dim);
+        cursor: progress;
       }
       footer {
         padding: 18px 24px 20px;
@@ -135,21 +221,27 @@
       .ends {
         display: flex;
         justify-content: space-between;
-        width: 180px;
+        gap: 12px;
+        min-width: 180px;
+        white-space: nowrap;
       }
     </style>
   </head>
   <body>
     <header>
       <span class="name">Riptide</span>
-      <span class="tag">decay spike — no retrieval, only the dying query</span>
+      <span class="tag" id="tag">loading the lexicon…</span>
       <span class="count" id="fireCount">trigger ×0</span>
     </header>
-    <canvas id="field"></canvas>
+    <main>
+      <canvas id="field"></canvas>
+      <aside id="results" aria-live="polite" aria-label="retrieved passages"></aside>
+    </main>
     <footer>
       <input
         id="prompt"
-        placeholder="type — there is no enter key"
+        placeholder="loading word vectors…"
+        disabled
         autocomplete="off"
         autocapitalize="off"
         spellcheck="false"
