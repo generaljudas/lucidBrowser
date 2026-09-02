@@ -1,0 +1,59 @@
+{
+  "k": 10,
+  "queries": 500,
+  "queryFraction": 0.4,
+  "recall": {
+    "vocabularyPruning": 1.0,
+    "tokenInt8": 0.9964,
+    "docInt8": 0.9938,
+    "bothInt8": 0.9936,
+    "shippedVersusFloatBaseline": 0.9936
+  },
+  "cosineErrorInt8": {
+    "mean": 0.00044,
+    "p99": 0.00147,
+    "max": 0.00283
+  },
+  "wordNeighbourRecallInt8": 0.9962,
+  "corpusCosine": {
+    "sameArticle": {
+      "p10": 0.3044,
+      "p50": 0.6052,
+      "p90": 0.7949
+    },
+    "randomPair": {
+      "p10": -0.2836,
+      "p50": -0.0242,
+      "p90": 0.3238
+    }
+  },
+  "vocabulary": {
+    "sourceRows": 396935,
+    "shipped": 32932,
+    "dim": 100,
+    "commonDirectionVarianceRatio": 0.7495
+  },
+  "corpus": {
+    "articles": 998,
+    "chunks": 4201,
+    "tokensPerChunkMedian": 85.0,
+    "chunkTokensInVocabulary": 0.9853
+  },
+  "bytes": {
+    "tokens": 3806120,
+    "tokensGzip": 3421729,
+    "docs": 1288280,
+    "docsGzip": 725082
+  },
+  "salienceExamples": {
+    "the": 0.0133,
+    "of": 0.0262,
+    "and": 0.0511,
+    "is": 0.1187,
+    "world": 0.4958,
+    "water": 0.8467,
+    "music": 0.8376,
+    "glacier": 0.9923,
+    "saxophone": 0.9961
+  }
+}

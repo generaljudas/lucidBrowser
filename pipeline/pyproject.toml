@@ -4,9 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "riptide-pipeline"
-version = "0.0.1"
-description = "Offline corpus pipeline for Riptide: acquisition, chunking, embedding, int8 quantisation, packing (skeleton - roadmap M2). Never runs in the browser."
+version = "0.1.0"
+description = "Offline corpus pipeline for Riptide: acquisition, chunking, SIF embedding into the static space, int8 quantisation with measured recall loss, packing the shipped bundle. Never runs in the browser."
 requires-python = ">=3.12"
+dependencies = ["numpy>=2.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "ruff>=0.6"]
@@ -20,3 +21,6 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+"riptide_pipeline/fixture.py" = ["E501"]  # prose fixture data

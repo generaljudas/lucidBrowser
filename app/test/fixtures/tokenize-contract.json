@@ -1,0 +1,15 @@
+{
+  "_": "Shared contract between app/src/tokenize.ts and pipeline/riptide_pipeline/tokenize.py: each input is a complete text (trailing whitespace implied) and must yield exactly these tokens in both languages.",
+  "cases": [
+    { "input": "The quiet tide pulls back", "tokens": ["the", "quiet", "tide", "pulls", "back"] },
+    { "input": "Tide, tide. \"TIDE\" (tide)", "tokens": ["tide", "tide", "tide", "tide"] },
+    { "input": "well-known   don't  o'clock", "tokens": ["well-known", "don't", "o'clock"] },
+    { "input": "--- ... !!! 42 3.14 1,000", "tokens": ["42", "3.14", "1,000"] },
+    { "input": "Ångström\tcafé\nNAÏVE", "tokens": ["ångström", "café", "naïve"] },
+    { "input": "東京 — Tōkyō; москва", "tokens": ["東京", "tōkyō", "москва"] },
+    { "input": "  leading and trailing  ", "tokens": ["leading", "and", "trailing"] },
+    { "input": "", "tokens": [] },
+    { "input": "  \n\t ", "tokens": [] },
+    { "input": "a-b- -c- ‘quoted’ “smart”", "tokens": ["a-b", "c", "quoted", "smart"] }
+  ]
+}
