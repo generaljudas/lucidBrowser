@@ -38,8 +38,9 @@ A milestone that serves no goal does not ship.
 
 ## Follow-ups from M2
 
-- **G1 load time on real connections.** The bundles are 5.1 MB; the budget
-  wants ~8 Mb/s. Measure on throttled connections, then pull levers in
+- **G1 load time on real connections.** The bundles are 5.1 MB on disk,
+  4.15 MB gzipped by Pages; the budget wants ~7 Mb/s. Measure on throttled
+  connections, then pull levers in
   order: 50-d vectors (re-measure recall), smaller top-N, shorter snippets.
   *(G1)*
 - **Snippet artefacts.** MediaWiki extracts leave empty parentheses where

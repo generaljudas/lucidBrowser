@@ -83,15 +83,17 @@ equality, and the pipeline tests assert the fixture rebuilds bit-identically.
 - **Building the bundle in the deploy workflow.** Reproducible in
   principle, but couples every deploy to two third-party hosts and makes
   the report describe bytes the visitor may not be getting.
-- **gzip / Brotli to hit the budget.** int8 vectors compress ~10%; the
-  snippets compress well but are a fifth of the payload. GitHub Pages does
-  not compress `application/octet-stream` in any case, so the raw size is
-  the transferred size.
+- **Pre-compressing to hit the budget.** GitHub Pages gzips the bundles
+  itself (measured live: tokens 3.81 → 3.42 MB, docs 1.29 → 0.73 MB;
+  4.15 MB transferred), and int8 vectors do not compress much further.
+  Brotli or a smarter entropy code would buy a little on the snippets and
+  nothing on the vectors; the size levers are the vectors' width and count.
 
 ## Consequences
 
-- **5.1 MB is the honest number**, and it is above what Goal 1 wants on a
-  slow connection: it needs ~8 Mb/s to land inside five seconds. The page
+- **5.1 MB on disk, 4.15 MB over the wire is the honest number**, and it
+  is above what Goal 1 wants on a slow connection: it needs ~7 Mb/s to land
+  inside five seconds. The page
   shows load progress in the prompt and enables typing the instant the
   tables arrive; nothing else blocks. If measurement on real connections
   says this is too slow, the levers are, in order: 50-d vectors (halves the
