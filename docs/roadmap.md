@@ -38,11 +38,29 @@ A milestone that serves no goal does not ship.
 
 ## Follow-ups from M2
 
+- **The same article appears several times in one result set.** Reported
+  from live use, then measured: the index is per passage, so an article
+  contributes 4.2 chunks on average (12 at most) and a query strongly about
+  one topic fills the pane with one article's paragraphs. Across ten test
+  queries a top-8 held 6.2 distinct articles on average; the worst, "jazz
+  saxophone solo", held three (Orchestra ×4, Jazz ×3). Fetching 15 rows was
+  enough to collect 8 distinct articles in every case measured.
+
+  The fix belongs in the results pane, not in `BundledAdapter`: the port
+  contract is "the *k* nearest passages", and both the recall figures in
+  `reports/m2-bundle.md` (measured against brute force over chunks) and the
+  cross-language golden fixture are pinned to that meaning. Over-fetch
+  ~3×K, keep the best-scoring chunk per article, render K. Open question
+  for whoever picks it up: strictly one chunk per article (eight
+  destinations) or a cap of two (keeps the signal that an article matched
+  in depth). *(G1)*
+
 - **G1 load time on real connections.** The bundles are 5.1 MB on disk,
-  4.15 MB gzipped by Pages; the budget wants ~7 Mb/s. Measure on throttled
-  connections, then pull levers in
-  order: 50-d vectors (re-measure recall), smaller top-N, shorter snippets.
-  *(G1)*
+  4.15 MB gzipped by Pages; the budget wants ~7 Mb/s. One data point so
+  far: 954 ms from click to a typeable prompt, headless, on a fast home
+  connection. Measure on throttled connections before trusting that, then
+  pull levers in order: 50-d vectors (re-measure recall), smaller top-N,
+  shorter snippets. *(G1)*
 - **Snippet artefacts.** MediaWiki extracts leave empty parentheses where
   pronunciation guides were; a cleanup pass in `chunk.py`. *(G1, cosmetic)*
 - **θ from people, not simulation.** 0.85 was set by replaying typed

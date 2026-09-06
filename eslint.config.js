@@ -41,6 +41,15 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
+    // Verification scripts: Node on the outside, the page's globals inside
+    // page.evaluate(). Declared here rather than pulling in `globals`, which
+    // would be a dependency for one file.
+    files: ['tools/**/*.mjs'],
+    languageOptions: {
+      globals: { console: 'readonly', process: 'readonly', window: 'readonly' },
+    },
+  },
+  {
     files: ['core/src/**/*.ts'],
     rules: {
       'no-restricted-globals': ['error', ...bannedCoreGlobals],

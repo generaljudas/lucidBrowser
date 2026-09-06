@@ -109,6 +109,14 @@ equality, and the pipeline tests assert the fixture rebuilds bit-identically.
 - The MediaWiki extracts carry occasional artefacts (empty parentheses
   where pronunciation guides were stripped). Cosmetic; a cleanup pass in
   `chunk.py` is a small follow-up.
+- The fixture's bit-identity test depends on `np.linalg.svd` agreeing
+  across platforms, which was an open risk when it was written. It holds:
+  the same bytes are produced on macOS/Accelerate and on Linux/OpenBLAS in
+  CI. If a future BLAS breaks that, replace the fixture's common-direction
+  step with a deterministic power iteration rather than loosening the test.
+- Retrieval is per passage, so one article can occupy several of the top
+  *k*. That is correct for the port and wrong for the pane; the fix and its
+  measurements are a roadmap follow-up, not a change to this format.
 - Anyone rebuilding gets a new `space.id` and must ship both bundles
   together; the app refuses a mismatched pair rather than scoring
   nonsense.

@@ -83,6 +83,13 @@ npm run dev        # the spike, on a local port
 pinned-Python (`pip install -e './pipeline[dev]' && pytest pipeline`). CI
 runs all three toolchains on every push.
 
+[`tools/verify-live.mjs`](tools/verify-live.mjs) drives the built page in a
+headless browser and prints what a stranger gets: load time, retrieved
+titles for two topics, token salience, and whether anything fires on a
+timer. It takes a URL, so it checks the deployed page and not just a local
+build. Playwright is not a dependency of this repo; the script says how to
+run it.
+
 The bundles under `app/public/bundle/` are committed, so the app runs
 without the pipeline. To rebuild them — a deliberate act, since it changes
 the space and the report — `python -m riptide_pipeline build` from
